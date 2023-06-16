@@ -1,21 +1,14 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useFormik } from 'formik'
 import { signUpSchema } from '../schemas/schemas'
 import { useAuth } from '../context/AuthContext'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { registerUser } from '../utils/auth.api'
 import { ErrorAlert } from './ErrorAlert'
 
 export const SignUp = () => {
   const [error, setError] = useState(null)
-  const { currentUser, setCurrentUser } = useAuth()
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    if (currentUser) {
-      navigate('/dashboard')
-    }
-  }, [currentUser])
+  const { setCurrentUser } = useAuth()
 
   const formik = useFormik({
     initialValues: {
