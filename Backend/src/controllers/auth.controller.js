@@ -6,6 +6,12 @@ export const signup = async (req, res) => {
   try {
     const { username, email, password } = req.body
 
+    const userFound = await UserModel.findOne({ email })
+
+    if (userFound) {
+      return res.status(400).json({ message: ['Email already exists'] })
+    }
+
     const hashPassword = await bcrypt.hash(password, 10)
 
     const newUser = new UserModel({
@@ -21,7 +27,6 @@ export const signup = async (req, res) => {
     })
     res.cookie('token', token)
     res.json(userSaved)
-    //res.json(userSaved)
   } catch (error) {
     console.log(error)
   }
