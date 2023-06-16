@@ -2,7 +2,7 @@ import UserModel from '../models/user.model.js'
 import bcrypt from 'bcryptjs'
 import { getAccessToken } from '../libs/jwt.js'
 
-export const register = async (req, res) => {
+export const signup = async (req, res) => {
   try {
     const { username, email, password } = req.body
 
