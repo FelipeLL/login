@@ -2,10 +2,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import { signUpSchema } from '../schemas/schemas'
 import { useAuth } from '../context/AuthContext'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { registerUser } from '../utils/auth.api'
+import { ErrorAlert } from './ErrorAlert'
 
 export const SignUp = () => {
-  const { signup, currentUser } = useAuth()
+  const [error, setError] = useState(null)
+  const { currentUser, setCurrentUser } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -21,9 +24,18 @@ export const SignUp = () => {
       password: ''
     },
     validationSchema: signUpSchema,
-    onSubmit: signup
+    onSubmit: async values => {
+      try {
+        const user = await registerUser(values)
+        setCurrentUser(user)
+      } catch (error) {
+        setError(error.message)
+        setTimeout(() => {
+          setError(null)
+        }, 3000)
+      }
+    }
   })
-
   return (
     <section className='bg-slate-900 h-screen flex flex-col justify-center items-center'>
       <div className='flex gap-2 text-white mb-5'>
@@ -31,6 +43,7 @@ export const SignUp = () => {
         <h2 className='text-2xl font-medium'>Enterprise</h2>
       </div>
       <div className='max-w-md w-full p-8 border rounded-md bg-slate-800 text-white border-slate-700'>
+        {error && <ErrorAlert error={error} />}
         <h2 className='mb-6 text-xl font-semibold'>Sign up for an account</h2>
         <form onSubmit={formik.handleSubmit}>
           <div className='flex flex-col gap-y-1.5 mb-4'>

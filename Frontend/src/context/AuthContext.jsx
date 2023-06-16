@@ -1,5 +1,4 @@
 import { createContext, useState, useContext } from 'react'
-import { registerUser } from '../utils/auth.api'
 
 const AuthContext = createContext()
 
@@ -14,16 +13,11 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null)
 
-  const signup = async user => {
-    const newUser = await registerUser(user)
-    setCurrentUser(newUser)
-  }
-
   return (
     <AuthContext.Provider
       value={{
         currentUser,
-        signup
+        setCurrentUser
       }}
     >
       {children}
