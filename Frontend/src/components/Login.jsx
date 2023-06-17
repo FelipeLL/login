@@ -4,9 +4,11 @@ import { loginSchema } from '../schemas/schemas'
 import { loginUser } from '../utils/auth.api'
 import { useState } from 'react'
 import { ErrorAlert } from './ErrorAlert'
+import { useAuth } from '../context/AuthContext'
 
 export const Login = () => {
   const [error, setError] = useState(null)
+  const { setCurrentUser } = useAuth()
 
   const formik = useFormik({
     initialValues: {
@@ -16,8 +18,8 @@ export const Login = () => {
     validationSchema: loginSchema,
     onSubmit: async values => {
       try {
-        const response = await loginUser(values)
-        console.log(response)
+        const user = await loginUser(values)
+        setCurrentUser(user)
       } catch (error) {
         setError(error.message)
         setTimeout(() => {
