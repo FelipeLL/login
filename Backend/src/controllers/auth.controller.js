@@ -25,8 +25,14 @@ export const signup = async (req, res) => {
     const token = getAccessToken({
       id: userSaved._id
     })
-    res.cookie('token', token)
-    res.json(userSaved)
+
+    const userObject = userSaved.toObject()
+    delete userObject.password
+
+    res.json({
+      user: userObject,
+      token
+    })
   } catch (error) {
     console.log(error)
   }
@@ -52,14 +58,14 @@ export const login = async (req, res) => {
       id: userFound._id
     })
 
-    res.cookie('token', token)
-    res.json(userFound)
+    const userObject = userFound.toObject()
+    delete userObject.password
+
+    res.json({
+      user: userObject,
+      token
+    })
   } catch (error) {
     console.log(error)
   }
-}
-
-export const logout = async (req, res) => {
-  res.cookie('token', '')
-  res.json({ message: 'Logout successfully' })
 }
