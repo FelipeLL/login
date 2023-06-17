@@ -1,4 +1,5 @@
-import { createContext, useState, useContext } from 'react'
+/* eslint-disable no-undef */
+import { createContext, useState, useContext, useEffect } from 'react'
 
 const AuthContext = createContext()
 
@@ -12,6 +13,15 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null)
+
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem('user', JSON.stringify(currentUser))
+    } else {
+      const { token } = JSON.parse(localStorage.getItem('user'))
+      console.log(token)
+    }
+  }, [currentUser])
 
   return (
     <AuthContext.Provider
