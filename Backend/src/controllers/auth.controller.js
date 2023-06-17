@@ -1,6 +1,6 @@
 import UserModel from '../models/user.model.js'
 import bcrypt from 'bcryptjs'
-import { getAccessToken } from '../libs/jwt.js'
+import { getAccessToken, verifyAccessToken } from '../libs/jwt.js'
 
 export const signup = async (req, res) => {
   try {
@@ -68,4 +68,32 @@ export const login = async (req, res) => {
   } catch (error) {
     console.log(error)
   }
+}
+
+export const verifyToken = async (req, res) => {
+  const { token } = req.body
+
+  if (!token) {
+    return res.status(403).json({ message: 'Unauthorized' })
+  }
+
+  const decoded = verifyAccessToken(token)
+
+  if (!decoded) {
+    return res.status(401).json({ message: 'Invalid token' })
+  }
+
+  const userFound = await UserModel.findOne({ _id: decoded.id })
+
+  if (!userFound) {
+    return res.status(400).json({ message: 'User does not exist' })
+  }
+
+  const userObject = userFound.toObject()
+  delete userObject.password
+
+  res.json({
+    user: userObject,
+    token
+  })
 }

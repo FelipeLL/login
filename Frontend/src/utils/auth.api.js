@@ -37,18 +37,26 @@ export const loginUser = async credentials => {
 }
 
 export const verifyToken = async token => {
-  const response = await fetch(URL_VERIFY_TOKEN, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ token })
-  })
+  try {
+    if (!token) {
+      throw new Error('Token not found')
+    }
 
-  if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.message)
+    const response = await fetch(URL_VERIFY_TOKEN, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ token })
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error(error)
   }
-
-  return await response.json()
 }

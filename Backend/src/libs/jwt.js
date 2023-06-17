@@ -5,3 +5,7 @@ export const getAccessToken = id => {
     expiresIn: '1d'
   })
 }
+
+export const verifyAccessToken = token => {
+  return jwt.verify(token, 'secretKey')
+}

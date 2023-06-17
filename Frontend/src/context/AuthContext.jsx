@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import { createContext, useState, useContext, useEffect } from 'react'
+import { verifyToken } from '../utils/auth.api'
 
 const AuthContext = createContext()
 
@@ -14,12 +15,26 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null)
 
+  const handleTokenVerification = async () => {
+    try {
+      const user = localStorage.getItem('user')
+      if (user) {
+        const { token } = JSON.parse(user)
+        const response = await verifyToken(token)
+        if (response && response !== currentUser) {
+          setCurrentUser(response)
+        }
+      }
+    } catch (error) {
+      console.log('Error during token verification:', error)
+    }
+  }
+
   useEffect(() => {
     if (currentUser) {
       localStorage.setItem('user', JSON.stringify(currentUser))
     } else {
-      const { token } = JSON.parse(localStorage.getItem('user'))
-      console.log(token)
+      handleTokenVerification()
     }
   }, [currentUser])
 
